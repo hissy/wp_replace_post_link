@@ -9,9 +9,8 @@ Version: 0.1
 class replace_post_link {
 	
 	/** Custom field key
-	* @access public
 	*/
-	var $field_name;
+	private $field_name;
 
 	// singleton instance
 	private static $instance;
@@ -44,7 +43,7 @@ class replace_post_link {
 	}
 	
 	function replace_post_link( $permalink, $post, $leavename ) {
-		$key = $this->field_name;
+		$key = $this->get_field_name();
 		$replace_link = esc_url( $post->$key );
 		if ( !empty($replace_link) && ($replace_link != $permalink) ) {
 			return $replace_link;
@@ -55,7 +54,7 @@ class replace_post_link {
 	
 	function replace_page_link( $link, $post_id, $sample ) {
 		$post = get_post( $post_id );
-		$key = $this->field_name;
+		$key = $this->get_field_name();
 		$replace_link = esc_url( $post->$key );
 		if ( !empty($replace_link) && ($replace_link != $link) ) {
 			return $replace_link;
@@ -65,7 +64,7 @@ class replace_post_link {
 	}
 	
 	function replace_post_type_link( $post_link, $post, $leavename, $sample ) {
-		$key = $this->field_name;
+		$key = $this->get_field_name();
 		$replace_link = esc_url( $post->$key );
 		if ( !empty($replace_link) && ($replace_link != $post_link) ) {
 			return $replace_link;
@@ -77,7 +76,7 @@ class replace_post_link {
 	function comments_open( $open, $post_id ) {
 		if ($open) {
 			$post = get_post( $post_id );
-			$key = $this->field_name;
+			$key = $this->get_field_name();
 			$link = esc_url( $post->$key );
 			if (!empty($link)) {
 				return false;
@@ -87,6 +86,10 @@ class replace_post_link {
 		return $open;
 	}
 	
+	function get_field_name() {
+		return $this->field_name;
+	}
+	
 }
 
 $replace_post_link = replace_post_link::instance();
@@ -94,7 +97,7 @@ $replace_post_link = replace_post_link::instance();
 // conditional function
 function is_link_replaced($post = false) {
 	$post = get_post( $post );
-	$key = replace_post_link::instance()->field_name;
+	$key = replace_post_link::instance()->get_field_name();
 	$link = esc_url( $post->$key );
 	if (!empty($link)) {
 		return true;
